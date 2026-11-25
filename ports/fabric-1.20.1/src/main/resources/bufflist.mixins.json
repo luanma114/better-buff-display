@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.bufflist.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "AbstractContainerScreenAccessor",
+    "EffectRenderingInventoryScreenMixin",
+    "GuiMixin",
+    "MobEffectInstanceAccessor"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}

@@ -1,0 +1,41 @@
+plugins {
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+version = '1.2.2'
+group = 'com.bufflist'
+base { archivesName = 'better-buff-display-1.21.1-neoforge' }
+
+def root = file('../..')
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    version = '21.1.267'
+    runs {
+        client {
+            client()
+            // gradle runClient -Psmoke：自动建档、截图、退出（SmokeTest）
+            if (project.hasProperty('smoke')) systemProperty 'bufflist.smoketest', 'true'
+            programArguments.addAll('--width', '1280', '--height', '720')
+        }
+    }
+    mods {
+        bufflist { sourceSet sourceSets.main }
+    }
+}
+
+sourceSets {
+    main { java { srcDir new File(root, 'common-1.21.1/src/main/java') } }
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') { expand 'version': project.version }
+    from(new File(root, 'src/main/resources/assets')) { into 'assets' }
+    from(new File(root, 'descpack/assets')) { into 'assets' }
+}
+
+jar { from(new File(root, 'LICENSE')) }

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "bufflist",
+  "version": "${version}",
+  "name": "Better Buff Display",
+  "description": "Shows your active effects as a list with names, levels, timers and descriptions. Client-side.",
+  "authors": ["Ramcode"],
+  "license": "MIT",
+  "icon": "assets/bufflist/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.bufflist.fabric.BuffListFabric"],
+    "modmenu": ["com.bufflist.fabric.ModMenuCompat"]
+  },
+  "mixins": ["bufflist.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "~1.21.1",
+    "fabric-api": "*",
+    "java": ">=21"
+  }
+}

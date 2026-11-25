@@ -1,0 +1,27 @@
+# 构建与运行
+build/
+.gradle/
+run/
+runs/
+**/build/
+**/.gradle/
+**/run/
+**/runs/
+*.log
+out/
+.idea/
+*.iml
+
+# 整合包测试环境：里面是别人的模组 jar 和存档，不能公开
+mc-test/
+forge-installer.jar
+
+# 说明编写的工作目录：含反编译的第三方源码、抓取的网页数据、第三方语言文件
+desc-work/
+
+# 本地备份、发布产物
+backup-*/
+preview_old/
+release/
+build.bat
+验收-原版.bat

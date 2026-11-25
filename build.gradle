@@ -1,0 +1,88 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+}
+
+version = '1.2.2'
+group = 'com.bufflist'
+base { archivesName = 'better-buff-display-1.20.1-forge' }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+sourceSets {
+    // 三个平台共用的代码（只用原版 API，加载器相关的部分走 Platform 接口）
+    main { java { srcDir 'common/src/main/java' } }
+    preview {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    previewImplementation.extendsFrom implementation
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            mods { bufflist { source sourceSets.main } }
+        }
+        // gradle runSmoke：四个平台共用的自测（SmokeTest），自动建档、截图、退出
+        smoke {
+            parent runs.client
+            workingDirectory project.file('run')
+            property 'bufflist.smoketest', 'true'
+            args '--width', '1280', '--height', '720'
+            mods { bufflist { source sourceSets.main } }
+        }
+        // 默认：自动截图后退出。gradle runPreview -PbfMode=accept：验收模式（原版 Forge + 本模组，建档挂效果后交给人操作）
+        preview {
+            parent runs.client
+            workingDirectory project.file('run')
+            def accept = project.findProperty('bfMode') == 'accept'
+            property 'bufflist.preview', accept ? 'false' : 'true'
+            if (accept) {
+                property 'bufflist.packtest', 'true'
+                property 'bufflist.scenario', 'accept'
+            }
+            args '--width', accept ? '1600' : '1280', '--height', accept ? '900' : '720'
+            mods { bufflist { source sourceSets.main; source sourceSets.preview } }
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.3.0'
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+
+// 效果说明（descpack/assets，唯一来源）直接打进模组 jar；资源包仍可覆盖
+processResources {
+    from('descpack/assets') { into 'assets' }
+}
+
+// 整合包实测用：正式代码 + 预览/测试 harness，打成可直接放进 mods 的 jar（不发布）
+tasks.register('packtestJar', Jar) {
+    archiveClassifier = 'packtest'
+    from sourceSets.main.output
+    from sourceSets.preview.output
+}
+reobf { packtestJar {} }
+tasks.named('packtestJar') { finalizedBy 'reobfPacktestJar' }
+
+jar {
+    from('LICENSE')
+    manifest {
+        attributes([
+            'Specification-Title'     : 'bufflist',
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : project.version,
+        ])
+    }
+    finalizedBy 'reobfJar'
+}

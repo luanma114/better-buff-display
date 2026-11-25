@@ -1,0 +1,52 @@
+plugins {
+    id 'fabric-loom' version '1.7.4'
+}
+
+version = '1.2.2'
+group = 'com.bufflist'
+base { archivesName = 'better-buff-display-1.20.1-fabric' }
+
+def root = file('../..')
+
+repositories {
+    maven { url = 'https://maven.terraformersmc.com/releases/' }
+}
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.20.1'
+    mappings loom.officialMojangMappings()
+    modImplementation 'net.fabricmc:fabric-loader:0.16.14'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.92.2+1.20.1'
+    modCompileOnly('com.terraformersmc:modmenu:7.2.2') { transitive = false }
+}
+
+sourceSets {
+    main { java { srcDir new File(root, 'common/src/main/java') } }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') { expand 'version': project.version }
+    from(new File(root, 'src/main/resources/assets')) { into 'assets' }
+    from(new File(root, 'descpack/assets')) { into 'assets' }
+}
+
+jar { from(new File(root, 'LICENSE')) }
+
+// gradle runClient -Psmoke：自动建档、截图、退出（SmokeTest）
+loom {
+    runs {
+        client {
+            if (project.hasProperty('smoke')) vmArg '-Dbufflist.smoketest=true'
+            programArgs '--width', '1280', '--height', '720'
+        }
+    }
+}
