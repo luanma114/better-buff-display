@@ -7,7 +7,7 @@ modId="bufflist"
 version="1.2.2"
 displayName="更好的buff显示 Better Buff Display"
 logoFile="logo.png"
-authors="Ramcode"
+authors="luanma114"
 displayTest="IGNORE_ALL_VERSION"
 description='''
 把背包里挤成一团的状态效果图标换成整齐的列表：图标 + 名称 + 等级 + 剩余时间。

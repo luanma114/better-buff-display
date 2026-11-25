@@ -7,7 +7,7 @@ modId="bufflist"
 version="${version}"
 displayName="更好的buff显示 Better Buff Display"
 logoFile="logo.png"
-authors="Ramcode"
+authors="luanma114"
 description='''
 Shows your active effects as a list with names, levels, timers and descriptions. Client-side, the server doesn't need it.
 把背包里挤成一团的状态效果图标换成列表：图标、名称、等级、剩余时间，按住 Shift 看效果说明。纯客户端。
